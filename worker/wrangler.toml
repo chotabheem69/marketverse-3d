@@ -1,0 +1,10 @@
+name = "marketverse-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+# Allow-listed hosts for the proxy
+ALLOWED_HOSTS = "query1.finance.yahoo.com,query2.finance.yahoo.com"
+
+# Rate limiting (requests per minute per IP)
+RATE_LIMIT = 60

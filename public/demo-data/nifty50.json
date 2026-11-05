@@ -1,0 +1,30 @@
+{
+  "instruments": [
+    { "id": "RELIANCE.NS", "symbol": "RELIANCE", "name": "Reliance Industries", "sector": "Energy", "basePrice": 2450 },
+    { "id": "TCS.NS", "symbol": "TCS", "name": "Tata Consultancy Services", "sector": "IT", "basePrice": 3800 },
+    { "id": "HDFCBANK.NS", "symbol": "HDFCBANK", "name": "HDFC Bank", "sector": "Banking", "basePrice": 1650 },
+    { "id": "INFY.NS", "symbol": "INFY", "name": "Infosys", "sector": "IT", "basePrice": 1580 },
+    { "id": "ICICIBANK.NS", "symbol": "ICICIBANK", "name": "ICICI Bank", "sector": "Banking", "basePrice": 1020 },
+    { "id": "HINDUNILVR.NS", "symbol": "HINDUNILVR", "name": "Hindustan Unilever", "sector": "FMCG", "basePrice": 6200 },
+    { "id": "ITC.NS", "symbol": "ITC", "name": "ITC Limited", "sector": "FMCG", "basePrice": 435 },
+    { "id": "SBIN.NS", "symbol": "SBIN", "name": "State Bank of India", "sector": "Banking", "basePrice": 790 },
+    { "id": "BHARTIARTL.NS", "symbol": "BHARTIARTL", "name": "Bharti Airtel", "sector": "Telecom", "basePrice": 1450 },
+    { "id": "KOTAKBANK.NS", "symbol": "KOTAKBANK", "name": "Kotak Mahindra Bank", "sector": "Banking", "basePrice": 1850 },
+    { "id": "LT.NS", "symbol": "LT", "name": "Larsen & Toubro", "sector": "Construction", "basePrice": 3400 },
+    { "id": "AXISBANK.NS", "symbol": "AXISBANK", "name": "Axis Bank", "sector": "Banking", "basePrice": 1120 },
+    { "id": "ASIANPAINT.NS", "symbol": "ASIANPAINT", "name": "Asian Paints", "sector": "Consumer Goods", "basePrice": 2850 },
+    { "id": "MARUTI.NS", "symbol": "MARUTI", "name": "Maruti Suzuki", "sector": "Auto", "basePrice": 12200 },
+    { "id": "SUNPHARMA.NS", "symbol": "SUNPHARMA", "name": "Sun Pharmaceutical", "sector": "Pharma", "basePrice": 1680 },
+    { "id": "TITAN.NS", "symbol": "TITAN", "name": "Titan Company", "sector": "Consumer Goods", "basePrice": 3350 },
+    { "id": "ULTRACEMCO.NS", "symbol": "ULTRACEMCO", "name": "UltraTech Cement", "sector": "Cement", "basePrice": 9800 },
+    { "id": "WIPRO.NS", "symbol": "WIPRO", "name": "Wipro", "sector": "IT", "basePrice": 460 },
+    { "id": "NESTLEIND.NS", "symbol": "NESTLEIND", "name": "Nestle India", "sector": "FMCG", "basePrice": 2450 },
+    { "id": "BAJFINANCE.NS", "symbol": "BAJFINANCE", "name": "Bajaj Finance", "sector": "Financial Services", "basePrice": 6800 }
+  ],
+  "indices": [
+    { "id": "^NSEI", "symbol": "NIFTY 50", "name": "Nifty 50", "basePrice": 22500 },
+    { "id": "^BSESN", "symbol": "SENSEX", "name": "BSE Sensex", "basePrice": 74000 },
+    { "id": "^NSEBANK", "symbol": "BANK NIFTY", "name": "Bank Nifty", "basePrice": 48000 },
+    { "id": "^INDIAVIX", "symbol": "INDIA VIX", "name": "India VIX", "basePrice": 13.5 }
+  ]
+}
