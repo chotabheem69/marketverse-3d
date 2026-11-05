@@ -5,6 +5,7 @@ import { Header } from './components/ui/Header';
 import { WorldNavigation } from './components/ui/WorldNavigation';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { Disclaimer } from './components/ui/Disclaimer';
+import { DetailPanel } from './components/panels/DetailPanel';
 import { useAppStore } from './store/appStore';
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
           </div>
 
           <WorldNavigation />
+          <DetailPanel />
           <Disclaimer />
         </>
       )}
