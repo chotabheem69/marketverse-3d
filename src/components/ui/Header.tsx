@@ -3,6 +3,21 @@ import { useAppStore } from '../../store/appStore';
 import { getMarketStatus, getISTTime } from '../../utils/market-hours';
 import { useEffect, useState } from 'react';
 
+function TableToggle() {
+  const { isTableMode, setTableMode } = useAppStore();
+  return (
+    <button
+      onClick={() => setTableMode(!isTableMode)}
+      className={`glass glass-hover px-3 py-1.5 rounded-lg text-sm ${
+        isTableMode ? 'text-primary border-primary/30' : 'text-slate-400'
+      }`}
+      title="Toggle Table View (T)"
+    >
+      {isTableMode ? '📊 3D' : '📋 Table'}
+    </button>
+  );
+}
+
 export function Header() {
   const { currency, setCurrency, theme, setTheme } = useAppStore();
   const [time, setTime] = useState(getISTTime());
@@ -42,11 +57,14 @@ export function Header() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {/* Time */}
-          <div className="text-sm text-slate-400 font-mono">
+          <div className="text-sm text-slate-400 font-mono hidden md:block">
             {time} IST
           </div>
+
+          {/* Table view toggle */}
+          <TableToggle />
 
           {/* Currency toggle */}
           <button
