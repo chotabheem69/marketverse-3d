@@ -43,6 +43,10 @@ interface AppState {
   gameMode: boolean;
   setGameMode: (enabled: boolean) => void;
   toggleGameMode: () => void;
+  
+  // Game mode hover target (what the crosshair is pointing at)
+  gameHoveredId: string | null;
+  setGameHoveredId: (id: string | null) => void;
 
   // Watchlist
   watchlist: string[];
@@ -95,6 +99,10 @@ export const useAppStore = create<AppState>()(
       gameMode: false,
       setGameMode: (enabled) => set({ gameMode: enabled }),
       toggleGameMode: () => set((state) => ({ gameMode: !state.gameMode })),
+      
+      // Game mode hover target
+      gameHoveredId: null,
+      setGameHoveredId: (id) => set({ gameHoveredId: id }),
 
       // Watchlist
       watchlist: [],

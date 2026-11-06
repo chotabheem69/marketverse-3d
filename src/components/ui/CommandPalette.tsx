@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/appStore';
-import { NIFTY_50, POPULAR_FUNDS, TOP_CRYPTO, GLOBAL_INDICES, US_STOCKS, INDIA_INDICES } from '../../config/universe';
+import { NIFTY_50, POPULAR_FUNDS, TOP_CRYPTO, GLOBAL_INDICES, US_STOCKS, INDIA_INDICES, COMMODITIES } from '../../config/universe';
 import type { Instrument, WorldId } from '../../data/types';
 
 interface SearchItem {
@@ -97,6 +97,20 @@ function buildSearchIndex(): SearchItem[] {
       world: 'crypto-reactor',
       region: 'GLOBAL',
       group: '₿ Cryptocurrencies',
+    });
+  }
+
+  // Commodities
+  for (const commodity of COMMODITIES) {
+    items.push({
+      id: commodity.symbol,
+      name: commodity.name,
+      symbol: commodity.symbol,
+      type: 'commodity',
+      world: 'global-earth',
+      category: commodity.category,
+      region: 'GLOBAL',
+      group: '🥇 Commodities',
     });
   }
 
@@ -215,6 +229,7 @@ export function CommandPalette() {
     fund: '🏦',
     crypto: '₿',
     index: '📊',
+    commodity: '🥇',
   };
 
   const worldLabels: Record<string, string> = {

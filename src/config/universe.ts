@@ -26,6 +26,12 @@ export interface CryptoConfig {
   name: string;
 }
 
+export interface CommodityConfig {
+  symbol: string;    // Yahoo Finance symbol
+  name: string;
+  category: string;
+}
+
 // Nifty 50 constituents with sectors
 export const NIFTY_50: StockConfig[] = [
   { symbol: 'RELIANCE.NS', name: 'Reliance Industries', sector: 'Energy' },
@@ -162,6 +168,19 @@ export const US_STOCKS: StockConfig[] = [
   { symbol: 'XOM', name: 'Exxon Mobil', sector: 'Energy' },
   { symbol: 'PFE', name: 'Pfizer Inc.', sector: 'Healthcare' },
 ];
+
+// Commodities (via Yahoo Finance futures symbols)
+export const COMMODITIES: CommodityConfig[] = [
+  { symbol: 'GC=F', name: 'Gold (XAUUSD)', category: 'Precious Metals' },
+  { symbol: 'SI=F', name: 'Silver (XAGUSD)', category: 'Precious Metals' },
+  { symbol: 'CL=F', name: 'Crude Oil (WTI)', category: 'Energy' },
+  { symbol: 'BZ=F', name: 'Brent Crude Oil', category: 'Energy' },
+  { symbol: 'NG=F', name: 'Natural Gas', category: 'Energy' },
+  { symbol: 'HG=F', name: 'Copper', category: 'Metals' },
+];
+
+// Crypto (also treated as commodities for some purposes)
+// Bitcoin is listed in TOP_CRYPTO - no need to duplicate
 
 // Sector colors for visualization
 export const SECTOR_COLORS: Record<string, string> = {

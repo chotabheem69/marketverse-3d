@@ -12,6 +12,8 @@ import { Portfolio } from './components/ui/Portfolio';
 import { Crosshair, GameControlsHint } from './components/scene/GameControls';
 import { useURLHashState } from './hooks/useURLHashState';
 import { useAppStore } from './store/appStore';
+import { registerInstruments } from './data/registry';
+import { NIFTY_50, US_STOCKS, TOP_CRYPTO, POPULAR_FUNDS, GLOBAL_INDICES, INDIA_INDICES, COMMODITIES } from './config/universe';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -20,9 +22,59 @@ function App() {
   const gameMode = useAppStore((state) => state.gameMode);
   const toggleGameMode = useAppStore((state) => state.toggleGameMode);
   const setGameMode = useAppStore((state) => state.setGameMode);
+  const gameHoveredId = useAppStore((state) => state.gameHoveredId);
 
   // URL hash state for shareable links
   useURLHashState();
+
+  // Register all instruments globally for raycasting lookup
+  useEffect(() => {
+    const allInstruments: any[] = [];
+    
+    // Indian stocks
+    NIFTY_50.forEach(s => allInstruments.push({
+      id: s.symbol, symbol: s.symbol.replace('.NS', ''), name: s.name,
+      type: 'stock', region: 'IN', sector: s.sector, currency: 'INR',
+    }));
+    
+    // US stocks
+    US_STOCKS.forEach(s => allInstruments.push({
+      id: s.symbol, symbol: s.symbol, name: s.name,
+      type: 'stock', region: 'US', sector: s.sector, currency: 'USD',
+    }));
+    
+    // Indian indices
+    INDIA_INDICES.forEach(i => allInstruments.push({
+      id: i.symbol, symbol: i.symbol, name: i.name,
+      type: 'index', region: 'IN', currency: 'INR',
+    }));
+    
+    // Global indices
+    GLOBAL_INDICES.forEach(i => allInstruments.push({
+      id: i.symbol, symbol: i.symbol, name: i.name,
+      type: 'index', region: 'GLOBAL', currency: 'USD',
+    }));
+    
+    // Crypto
+    TOP_CRYPTO.forEach(c => allInstruments.push({
+      id: c.id, symbol: c.symbol, name: c.name,
+      type: 'crypto', region: 'GLOBAL', currency: 'USD',
+    }));
+    
+    // Mutual funds
+    POPULAR_FUNDS.forEach(f => allInstruments.push({
+      id: `MF-${f.schemeCode}`, symbol: f.schemeCode, name: f.name,
+      type: 'fund', region: 'IN', category: f.category, currency: 'INR',
+    }));
+    
+    // Commodities
+    COMMODITIES.forEach(c => allInstruments.push({
+      id: c.symbol, symbol: c.symbol, name: c.name,
+      type: 'commodity', region: 'GLOBAL', category: c.category, currency: 'USD',
+    }));
+    
+    registerInstruments(allInstruments);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -52,11 +104,24 @@ function App() {
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
       
       if (e.key === 'Escape') {
-        useAppStore.getState().setDetailPanelOpen(false);
-        useAppStore.getState().setPortfolioOpen(false);
-        if (isCommandPaletteOpen) setCommandPaletteOpen(false);
-        // Exit game mode on Escape
-        if (gameMode) setGameMode(false);
+        // In game mode: first close panels, then exit game mode
+        if (gameMode) {
+          const { isDetailPanelOpen, isPortfolioOpen } = useAppStore.getState();
+          if (isDetailPanelOpen || isPortfolioOpen) {
+            // Close panels but stay in game mode
+            useAppStore.getState().setDetailPanelOpen(false);
+            useAppStore.getState().setPortfolioOpen(false);
+            useAppStore.getState().setGameHoveredId(null);
+          } else {
+            // No panels open, exit game mode
+            setGameMode(false);
+          }
+        } else {
+          // Not in game mode - normal Esc behavior
+          useAppStore.getState().setDetailPanelOpen(false);
+          useAppStore.getState().setPortfolioOpen(false);
+          if (isCommandPaletteOpen) setCommandPaletteOpen(false);
+        }
       }
       
       // Number keys to switch worlds
@@ -113,7 +178,7 @@ function App() {
           <TableView />
           <Disclaimer />
           <GameControlsHint active={gameMode} onToggle={toggleGameMode} />
-          <Crosshair visible={gameMode} />
+          <Crosshair visible={gameMode} isHovering={!!gameHoveredId} />
 
           {/* Footer */}
           <footer className="fixed bottom-0 left-0 right-0 z-10 px-4 py-1 text-center">

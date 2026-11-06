@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createChart, ColorType } from 'lightweight-charts';
 import type { IChartApi } from 'lightweight-charts';
 
-// Trading platforms for Indian stocks - add your preferred broker here
+// Trading platforms for stocks - add your preferred broker here
 const TRADING_PLATFORMS = {
   'IN': [
     { name: 'Zerodha', url: (symbol: string) => `https://kite.zerodha.com/chart/NSE/${symbol}` },
@@ -24,6 +24,20 @@ const TRADING_PLATFORMS = {
     { name: 'TradingView', url: (symbol: string) => `https://www.tradingview.com/symbols/${symbol}/` },
   ],
 };
+
+// Special platforms for specific instrument types
+const COMMODITY_PLATFORMS = [
+  { name: 'TradingView', url: (symbol: string) => `https://www.tradingview.com/symbols/${symbol}/` },
+  { name: 'Yahoo Finance', url: (symbol: string) => `https://finance.yahoo.com/quote/${symbol}` },
+  { name: 'Investing.com', url: (symbol: string) => `https://www.investing.com/commodities/` },
+];
+
+const CRYPTO_PLATFORMS = [
+  { name: 'TradingView', url: (symbol: string) => `https://www.tradingview.com/symbols/${symbol}USD/` },
+  { name: 'CoinGecko', url: (symbol: string) => `https://www.coingecko.com/en/coins/${symbol.toLowerCase()}` },
+  { name: 'Binance', url: (symbol: string) => `https://www.binance.com/en/price/${symbol.toLowerCase()}` },
+  { name: 'Coinbase', url: (symbol: string) => `https://www.coinbase.com/price/${symbol.toLowerCase()}` },
+];
 
 export function DetailPanel() {
   const { 
@@ -48,7 +62,16 @@ export function DetailPanel() {
   const isWatchlisted = selectedInstrument ? watchlist.includes(selectedInstrument.id) : false;
   const quote = quoteData?.quote;
   const region = selectedInstrument?.region || 'GLOBAL';
-  const platforms = TRADING_PLATFORMS[region as keyof typeof TRADING_PLATFORMS] || TRADING_PLATFORMS.GLOBAL;
+  
+  // Pick platforms based on instrument type
+  let platforms;
+  if (selectedInstrument?.type === 'commodity') {
+    platforms = COMMODITY_PLATFORMS;
+  } else if (selectedInstrument?.type === 'crypto') {
+    platforms = CRYPTO_PLATFORMS;
+  } else {
+    platforms = TRADING_PLATFORMS[region as keyof typeof TRADING_PLATFORMS] || TRADING_PLATFORMS.GLOBAL;
+  }
 
   useEffect(() => {
     if (!chartContainerRef.current || !candlesData?.candles || !isDetailPanelOpen) return;
@@ -196,6 +219,11 @@ export function DetailPanel() {
                 {selectedInstrument.type === 'crypto' && (
                   <span className="inline-block mt-1 ml-1 px-2 py-0.5 rounded text-xs bg-orange-500/20 text-orange-300">
                     Crypto
+                  </span>
+                )}
+                {selectedInstrument.type === 'commodity' && (
+                  <span className="inline-block mt-1 ml-1 px-2 py-0.5 rounded text-xs bg-yellow-500/20 text-yellow-300">
+                    Commodity
                   </span>
                 )}
               </div>

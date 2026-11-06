@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useCallback } from 'react';
+import { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, Float, Html } from '@react-three/drei';
 import { useMultipleQuotes } from '../../data/hooks';
@@ -6,6 +6,7 @@ import { useAppStore } from '../../store/appStore';
 import { NIFTY_50, INDIA_INDICES } from '../../config/universe';
 import { getChangeColor, getTowerHeight, getSectorColor, generateGridPositions } from '../../hooks/useStockColor';
 import { formatCurrency, formatPercent, formatVolume } from '../../utils/formatters';
+import { registerInstruments } from '../../data/registry';
 import * as THREE from 'three';
 import type { Instrument } from '../../data/types';
 
@@ -80,6 +81,10 @@ function StockTower({
   const glowRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const currency = useAppStore((state) => state.currency);
+  const gameHoveredId = useAppStore((state) => state.gameHoveredId);
+  
+  const isGameHovered = gameHoveredId === data.stock.symbol;
+  const isHighlighted = hovered || isGameHovered;
   
   const height = price ? getTowerHeight(price * 1e7) : 5;
   const color = changePercent !== undefined ? getChangeColor(changePercent) : '#64748b';
@@ -87,7 +92,7 @@ function StockTower({
 
   useFrame(({ clock }) => {
     if (meshRef.current) {
-      const targetScale = hovered ? 1.1 : 1;
+      const targetScale = isHighlighted ? 1.1 : 1;
       meshRef.current.scale.lerp(
         new THREE.Vector3(targetScale, 1, targetScale),
         0.1
@@ -97,7 +102,8 @@ function StockTower({
     if (glowRef.current) {
       const pulse = 0.4 + Math.sin(clock.getElapsedTime() * 2 + data.position[0]) * 0.15;
       const material = glowRef.current.material as THREE.MeshBasicMaterial;
-      material.opacity = hovered ? 0.8 : pulse;
+      material.opacity = isHighlighted ? 0.9 : pulse;
+      material.color.set(isGameHovered ? '#06b6d4' : (hovered ? sectorColor : color));
     }
   });
 
@@ -121,6 +127,7 @@ function StockTower({
       {/* Main tower */}
       <mesh
         ref={meshRef}
+        userData={{ hoverable: true, instrumentId: data.stock.symbol }}
         onPointerOver={(e) => {
           e.stopPropagation();
           setHovered(true);
@@ -143,11 +150,11 @@ function StockTower({
       >
         <boxGeometry args={[1.5, height, 1.5]} />
         <meshStandardMaterial 
-          color={hovered && !isAnyPanelOpen ? sectorColor : color}
+          color={isHighlighted && !isAnyPanelOpen ? (isGameHovered ? '#06b6d4' : sectorColor) : color}
           metalness={0.5}
           roughness={0.3}
-          emissive={hovered && !isAnyPanelOpen ? sectorColor : color}
-          emissiveIntensity={hovered && !isAnyPanelOpen ? 0.4 : 0.1}
+          emissive={isHighlighted && !isAnyPanelOpen ? (isGameHovered ? '#06b6d4' : sectorColor) : color}
+          emissiveIntensity={isHighlighted && !isAnyPanelOpen ? 0.6 : 0.1}
         />
       </mesh>
 
@@ -161,7 +168,7 @@ function StockTower({
       <Text
         position={[0, height / 2 + 0.8, 0]}
         fontSize={0.4}
-        color={hovered && !isAnyPanelOpen ? '#ffffff' : '#cbd5e1'}
+        color={isHighlighted && !isAnyPanelOpen ? '#ffffff' : '#cbd5e1'}
         anchorX="center"
         anchorY="bottom"
         outlineWidth={0.02}
@@ -170,7 +177,7 @@ function StockTower({
         {data.stock.symbol.replace('.NS', '')}
       </Text>
 
-      {/* Tooltip on hover */}
+      {/* Tooltip on hover (orbit mode only - game mode uses auto-open) */}
       {hovered && !isAnyPanelOpen && (
         <Html
           position={[0, height / 2 + 2, 0]}
@@ -490,6 +497,20 @@ function SkyGlow() {
 export function IndiaEquityCity() {
   const setSelectedInstrument = useAppStore((state) => state.setSelectedInstrument);
   const isDetailPanelOpen = useAppStore((state) => state.isDetailPanelOpen);
+
+  // Register all Indian instruments for raycasting lookup
+  useEffect(() => {
+    const instruments: Instrument[] = NIFTY_50.map(s => ({
+      id: s.symbol,
+      symbol: s.symbol.replace('.NS', ''),
+      name: s.name,
+      type: 'stock',
+      region: 'IN',
+      sector: s.sector,
+      currency: 'INR',
+    }));
+    registerInstruments(instruments);
+  }, []);
 
   // Group stocks by sector
   const stocksBySector = useMemo(() => {
