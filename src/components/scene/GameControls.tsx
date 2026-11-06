@@ -33,7 +33,7 @@ export function GameControls({
   const euler = useRef(new THREE.Euler(0, 0, 0, 'YXZ'));
   const isPointerLocked = useRef(false);
   const raycaster = useRef(new THREE.Raycaster());
-  const [isLocked, setIsLocked] = useState(false);
+  const [, setIsLocked] = useState(false);
   
   // Store access
   const setGameHoveredId = useAppStore((state) => state.setGameHoveredId);
@@ -82,7 +82,7 @@ export function GameControls({
 
     const canvas = gl.domElement;
 
-    const handleClick = (e: MouseEvent) => {
+    const handleClick = (_e: MouseEvent) => {
       // If currently looking at a hovered item, clicking opens it
       const currentHovered = lastHoveredRef.current;
       if (currentHovered && isPointerLocked.current) {

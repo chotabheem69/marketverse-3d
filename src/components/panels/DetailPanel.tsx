@@ -29,7 +29,7 @@ const TRADING_PLATFORMS = {
 const COMMODITY_PLATFORMS = [
   { name: 'TradingView', url: (symbol: string) => `https://www.tradingview.com/symbols/${symbol}/` },
   { name: 'Yahoo Finance', url: (symbol: string) => `https://finance.yahoo.com/quote/${symbol}` },
-  { name: 'Investing.com', url: (symbol: string) => `https://www.investing.com/commodities/` },
+  { name: 'Investing.com', url: (_symbol: string) => `https://www.investing.com/commodities/` },
 ];
 
 const CRYPTO_PLATFORMS = [

@@ -65,7 +65,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // World state
       currentWorld: 'india-city',
       setCurrentWorld: (world) => set({ currentWorld: world }),

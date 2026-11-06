@@ -1,6 +1,6 @@
 // Core data types for all market instruments
 
-export type InstrumentType = 'stock' | 'index' | 'fund' | 'crypto' | 'forex';
+export type InstrumentType = 'stock' | 'index' | 'fund' | 'crypto' | 'commodity' | 'forex';
 
 export type MarketRegion = 'IN' | 'US' | 'GLOBAL';
 
