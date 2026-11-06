@@ -42,6 +42,7 @@ function StockTower({
   price, 
   changePercent, 
   volume,
+  isAnyPanelOpen,
   onHover, 
   onClick 
 }: { 
@@ -49,6 +50,7 @@ function StockTower({
   price: number | undefined;
   changePercent: number | undefined;
   volume: number | undefined;
+  isAnyPanelOpen: boolean;
   onHover: (hovered: boolean) => void;
   onClick: () => void;
 }) {
@@ -88,6 +90,8 @@ function StockTower({
         }}
         onClick={(e) => {
           e.stopPropagation();
+          setHovered(false); // Hide tooltip immediately on click
+          onHover(false);
           onClick();
         }}
         castShadow
@@ -95,27 +99,27 @@ function StockTower({
       >
         <boxGeometry args={[1.5, height, 1.5]} />
         <meshStandardMaterial 
-          color={hovered ? sectorColor : color}
+          color={hovered && !isAnyPanelOpen ? sectorColor : color}
           metalness={0.3}
           roughness={0.4}
-          emissive={hovered ? sectorColor : '#000000'}
-          emissiveIntensity={hovered ? 0.3 : 0}
+          emissive={hovered && !isAnyPanelOpen ? sectorColor : '#000000'}
+          emissiveIntensity={hovered && !isAnyPanelOpen ? 0.3 : 0}
         />
       </mesh>
 
-      {/* Label */}
+      {/* Label - always visible */}
       <Text
         position={[0, height / 2 + 0.8, 0]}
         fontSize={0.4}
-        color={hovered ? '#ffffff' : '#94a3b8'}
+        color={hovered && !isAnyPanelOpen ? '#ffffff' : '#94a3b8'}
         anchorX="center"
         anchorY="bottom"
       >
         {data.stock.symbol.replace('.NS', '')}
       </Text>
 
-      {/* Tooltip on hover */}
-      {hovered && (
+      {/* Tooltip only when hovered AND no panel is open (prevents crash) */}
+      {hovered && !isAnyPanelOpen && (
         <Html
           position={[0, height / 2 + 1.5, 0]}
           center
@@ -217,6 +221,7 @@ function MarketTicker() {
 
 export function IndiaEquityCity() {
   const setSelectedInstrument = useAppStore((state) => state.setSelectedInstrument);
+  const isDetailPanelOpen = useAppStore((state) => state.isDetailPanelOpen);
 
   // Group stocks by sector
   const stocksBySector = useMemo(() => {
@@ -297,6 +302,7 @@ export function IndiaEquityCity() {
                   price={quote?.price}
                   changePercent={quote?.changePercent}
                   volume={quote?.volume}
+                  isAnyPanelOpen={isDetailPanelOpen}
                   onHover={() => {}}
                   onClick={() => handleTowerClick(stockData.stock)}
                 />

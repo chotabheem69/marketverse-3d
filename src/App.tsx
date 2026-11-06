@@ -8,6 +8,7 @@ import { Disclaimer } from './components/ui/Disclaimer';
 import { DetailPanel } from './components/panels/DetailPanel';
 import { CommandPalette } from './components/ui/CommandPalette';
 import { TableView } from './components/ui/TableView';
+import { Portfolio } from './components/ui/Portfolio';
 import { useURLHashState } from './hooks/useURLHashState';
 import { useAppStore } from './store/appStore';
 
@@ -40,10 +41,16 @@ function App() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const { setTableMode, setCurrentWorld } = useAppStore.getState();
+      const { setTableMode, setCurrentWorld, setPortfolioOpen, setCommandPaletteOpen, isCommandPaletteOpen } = useAppStore.getState();
+      
+      // Don't handle shortcuts when typing in input fields
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
       
       if (e.key === 'Escape') {
         useAppStore.getState().setDetailPanelOpen(false);
+        useAppStore.getState().setPortfolioOpen(false);
+        if (isCommandPaletteOpen) setCommandPaletteOpen(false);
       }
       
       // Number keys to switch worlds
@@ -59,6 +66,12 @@ function App() {
       if (e.key === 't' && !e.ctrlKey && !e.metaKey) {
         const { isTableMode } = useAppStore.getState();
         setTableMode(!isTableMode);
+      }
+      
+      // P to toggle portfolio
+      if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey) {
+        const { isPortfolioOpen } = useAppStore.getState();
+        setPortfolioOpen(!isPortfolioOpen);
       }
     };
     
@@ -84,6 +97,7 @@ function App() {
 
           <WorldNavigation />
           <DetailPanel />
+          <Portfolio />
           <CommandPalette />
           <TableView />
           <Disclaimer />
@@ -91,7 +105,7 @@ function App() {
           {/* Footer */}
           <footer className="fixed bottom-0 left-0 right-0 z-10 px-4 py-1 text-center">
             <p className="text-xs text-slate-600">
-              Data: Yahoo Finance · mfapi.in · CoinGecko · Not financial advice · Press <kbd className="text-slate-400">Ctrl+K</kbd> to search
+              Data: Yahoo Finance · mfapi.in · CoinGecko · <kbd className="text-slate-400">Ctrl+K</kbd> Search · <kbd className="text-slate-400">P</kbd> Portfolio · <kbd className="text-slate-400">T</kbd> Table · <kbd className="text-slate-400">1-6</kbd> Worlds
             </p>
           </footer>
         </>

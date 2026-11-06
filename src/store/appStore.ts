@@ -2,6 +2,16 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { WorldId, Currency, ThemeMode, Instrument } from '../data/types';
 
+export interface PortfolioEntry {
+  id: string;
+  instrumentId: string;
+  symbol: string;
+  name: string;
+  buyPrice: number;
+  quantity: number;
+  dateAdded: number;
+}
+
 interface AppState {
   // Current world/district
   currentWorld: WorldId;
@@ -26,11 +36,18 @@ interface AppState {
   setTableMode: (mode: boolean) => void;
   isCommandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+  isPortfolioOpen: boolean;
+  setPortfolioOpen: (open: boolean) => void;
 
   // Watchlist
-  watchlist: string[]; // Array of instrument IDs
+  watchlist: string[];
   addToWatchlist: (instrumentId: string) => void;
   removeFromWatchlist: (instrumentId: string) => void;
+
+  // Portfolio
+  portfolio: PortfolioEntry[];
+  addPortfolioEntry: (entry: Omit<PortfolioEntry, 'id'>) => void;
+  removePortfolioEntry: (id: string) => void;
 
   // Data mode
   useDemoData: boolean;
@@ -39,7 +56,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // World state
       currentWorld: 'india-city',
       setCurrentWorld: (world) => set({ currentWorld: world }),
@@ -66,14 +83,27 @@ export const useAppStore = create<AppState>()(
       setTableMode: (mode) => set({ isTableMode: mode }),
       isCommandPaletteOpen: false,
       setCommandPaletteOpen: (open) => set({ isCommandPaletteOpen: open }),
+      isPortfolioOpen: false,
+      setPortfolioOpen: (open) => set({ isPortfolioOpen: open }),
 
       // Watchlist
       watchlist: [],
       addToWatchlist: (instrumentId) => set((state) => ({
-        watchlist: [...state.watchlist, instrumentId]
+        watchlist: state.watchlist.includes(instrumentId) 
+          ? state.watchlist 
+          : [...state.watchlist, instrumentId]
       })),
       removeFromWatchlist: (instrumentId) => set((state) => ({
         watchlist: state.watchlist.filter(id => id !== instrumentId)
+      })),
+
+      // Portfolio
+      portfolio: [],
+      addPortfolioEntry: (entry) => set((state) => ({
+        portfolio: [...state.portfolio, { ...entry, id: crypto.randomUUID() }]
+      })),
+      removePortfolioEntry: (id) => set((state) => ({
+        portfolio: state.portfolio.filter(p => p.id !== id)
       })),
 
       // Data mode
@@ -86,6 +116,7 @@ export const useAppStore = create<AppState>()(
         currency: state.currency,
         theme: state.theme,
         watchlist: state.watchlist,
+        portfolio: state.portfolio,
         useDemoData: state.useDemoData,
       }),
     }

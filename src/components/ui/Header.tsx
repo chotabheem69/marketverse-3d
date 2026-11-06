@@ -8,12 +8,33 @@ function TableToggle() {
   return (
     <button
       onClick={() => setTableMode(!isTableMode)}
-      className={`glass glass-hover px-3 py-1.5 rounded-lg text-sm ${
+      className={`glass glass-hover px-2 md:px-3 py-1.5 rounded-lg text-sm ${
         isTableMode ? 'text-primary border-primary/30' : 'text-slate-400'
       }`}
       title="Toggle Table View (T)"
     >
-      {isTableMode ? '📊 3D' : '📋 Table'}
+      <span className="hidden md:inline">{isTableMode ? '📊 3D' : '📋 Table'}</span>
+      <span className="md:hidden">📋</span>
+    </button>
+  );
+}
+
+function PortfolioButton() {
+  const { isPortfolioOpen, setPortfolioOpen, portfolio } = useAppStore();
+  return (
+    <button
+      onClick={() => setPortfolioOpen(!isPortfolioOpen)}
+      className={`glass glass-hover px-2 md:px-3 py-1.5 rounded-lg text-sm relative ${
+        isPortfolioOpen ? 'text-purple-400 border-purple-500/30' : 'text-slate-400'
+      }`}
+      title="Open Portfolio (P)"
+    >
+      💼
+      {portfolio.length > 0 && (
+        <span className="absolute -top-1 -right-1 bg-purple-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+          {portfolio.length}
+        </span>
+      )}
     </button>
   );
 }
@@ -57,11 +78,14 @@ export function Header() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           {/* Time */}
-          <div className="text-sm text-slate-400 font-mono hidden md:block">
+          <div className="text-sm text-slate-400 font-mono hidden lg:block">
             {time} IST
           </div>
+
+          {/* Portfolio button */}
+          <PortfolioButton />
 
           {/* Table view toggle */}
           <TableToggle />
@@ -69,7 +93,7 @@ export function Header() {
           {/* Currency toggle */}
           <button
             onClick={() => setCurrency(currency === 'INR' ? 'USD' : 'INR')}
-            className="glass glass-hover px-3 py-1.5 rounded-lg text-sm font-medium"
+            className="glass glass-hover px-2 md:px-3 py-1.5 rounded-lg text-sm font-medium"
           >
             {currency === 'INR' ? '₹ INR' : '$ USD'}
           </button>
@@ -77,7 +101,7 @@ export function Header() {
           {/* Theme toggle */}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="glass glass-hover px-3 py-1.5 rounded-lg text-sm"
+            className="glass glass-hover px-2 md:px-3 py-1.5 rounded-lg text-sm"
           >
             {theme === 'dark' ? '🌙' : '☀️'}
           </button>
