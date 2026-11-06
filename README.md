@@ -240,6 +240,7 @@ This is an **educational visualization tool only**.
 - Always do your own research and consult a SEBI-registered advisor
 - Past performance does not guarantee future results
 
+
 ---
 
 <p align="center">
