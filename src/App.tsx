@@ -9,6 +9,7 @@ import { DetailPanel } from './components/panels/DetailPanel';
 import { CommandPalette } from './components/ui/CommandPalette';
 import { TableView } from './components/ui/TableView';
 import { Portfolio } from './components/ui/Portfolio';
+import { WorldInstructions } from './components/ui/WorldInstructions';
 import { Crosshair, GameControlsHint } from './components/scene/GameControls';
 import { useURLHashState } from './hooks/useURLHashState';
 import { useAppStore } from './store/appStore';
@@ -176,6 +177,7 @@ function App() {
           <Portfolio />
           <CommandPalette />
           <TableView />
+          <WorldInstructions />
           <Disclaimer />
           <GameControlsHint active={gameMode} onToggle={toggleGameMode} />
           <Crosshair visible={gameMode} isHovering={!!gameHoveredId} />
