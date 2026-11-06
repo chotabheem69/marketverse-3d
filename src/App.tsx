@@ -9,6 +9,7 @@ import { DetailPanel } from './components/panels/DetailPanel';
 import { CommandPalette } from './components/ui/CommandPalette';
 import { TableView } from './components/ui/TableView';
 import { Portfolio } from './components/ui/Portfolio';
+import { Crosshair, GameControlsHint } from './components/scene/GameControls';
 import { useURLHashState } from './hooks/useURLHashState';
 import { useAppStore } from './store/appStore';
 
@@ -16,6 +17,9 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const theme = useAppStore((state) => state.theme);
+  const gameMode = useAppStore((state) => state.gameMode);
+  const toggleGameMode = useAppStore((state) => state.toggleGameMode);
+  const setGameMode = useAppStore((state) => state.setGameMode);
 
   // URL hash state for shareable links
   useURLHashState();
@@ -51,6 +55,8 @@ function App() {
         useAppStore.getState().setDetailPanelOpen(false);
         useAppStore.getState().setPortfolioOpen(false);
         if (isCommandPaletteOpen) setCommandPaletteOpen(false);
+        // Exit game mode on Escape
+        if (gameMode) setGameMode(false);
       }
       
       // Number keys to switch worlds
@@ -73,11 +79,16 @@ function App() {
         const { isPortfolioOpen } = useAppStore.getState();
         setPortfolioOpen(!isPortfolioOpen);
       }
+      
+      // G to toggle game mode
+      if ((e.key === 'g' || e.key === 'G') && !e.ctrlKey && !e.metaKey) {
+        toggleGameMode();
+      }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [gameMode, toggleGameMode]);
 
   return (
     <>
@@ -101,11 +112,13 @@ function App() {
           <CommandPalette />
           <TableView />
           <Disclaimer />
+          <GameControlsHint active={gameMode} onToggle={toggleGameMode} />
+          <Crosshair visible={gameMode} />
 
           {/* Footer */}
           <footer className="fixed bottom-0 left-0 right-0 z-10 px-4 py-1 text-center">
             <p className="text-xs text-slate-600">
-              Data: Yahoo Finance · mfapi.in · CoinGecko · <kbd className="text-slate-400">Ctrl+K</kbd> Search · <kbd className="text-slate-400">P</kbd> Portfolio · <kbd className="text-slate-400">T</kbd> Table · <kbd className="text-slate-400">1-6</kbd> Worlds
+              <kbd className="text-slate-400">Ctrl+K</kbd> Search · <kbd className="text-slate-400">P</kbd> Portfolio · <kbd className="text-slate-400">G</kbd> Game Mode · <kbd className="text-slate-400">T</kbd> Table · <kbd className="text-slate-400">1-6</kbd> Worlds · WASD + Mouse to explore
             </p>
           </footer>
         </>

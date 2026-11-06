@@ -8,10 +8,12 @@ import { MFGalaxy } from './scene/MFGalaxy';
 import { CryptoReactor } from './scene/CryptoReactor';
 import { GlobalEarth } from './scene/GlobalEarth';
 import { WatchlistSkyline } from './scene/WatchlistSkyline';
+import { GameControls } from './scene/GameControls';
 
 export function Scene() {
   const controlsRef = useRef<any>(null);
   const currentWorld = useAppStore((state) => state.currentWorld);
+  const gameMode = useAppStore((state) => state.gameMode);
 
   const renderWorld = () => {
     switch (currentWorld) {
@@ -34,7 +36,7 @@ export function Scene() {
 
   return (
     <Canvas
-      camera={{ position: [0, 10, 20], fov: 60 }}
+      camera={{ position: [0, 15, 35], fov: 60 }}
       dpr={[1, 2]}
       performance={{ min: 0.5 }}
       gl={{ antialias: true, alpha: false }}
@@ -45,24 +47,33 @@ export function Scene() {
       <pointLight position={[-10, 10, -10]} intensity={0.5} color="#06b6d4" />
       
       {/* Environment */}
-      <fog attach="fog" args={['#0a0e1a', 20, 100]} />
+      <fog attach="fog" args={['#0a0e1a', 30, 150]} />
       <color attach="background" args={['#0a0e1a']} />
       
       {/* Grid floor */}
-      <gridHelper args={[100, 100, '#1e293b', '#1e293b']} position={[0, -0.01, 0]} />
+      <gridHelper args={[200, 100, '#1e293b', '#1e293b']} position={[0, -0.01, 0]} />
       
       {/* Current world */}
       {renderWorld()}
       
-      {/* Controls */}
-      <OrbitControls
-        ref={controlsRef}
-        enableDamping
-        dampingFactor={0.05}
-        minDistance={5}
-        maxDistance={100}
-        maxPolarAngle={Math.PI / 2 - 0.1}
-      />
+      {/* Controls - either orbit or FPS-style */}
+      {gameMode ? (
+        <GameControls 
+          enabled={true} 
+          speed={0.3} 
+          lookSpeed={0.002}
+          bounds={{ minX: -80, maxX: 80, minY: 2, maxY: 40, minZ: -80, maxZ: 80 }}
+        />
+      ) : (
+        <OrbitControls
+          ref={controlsRef}
+          enableDamping
+          dampingFactor={0.05}
+          minDistance={5}
+          maxDistance={100}
+          maxPolarAngle={Math.PI / 2 - 0.1}
+        />
+      )}
       
       {/* Performance stats (dev only) */}
       {import.meta.env.DEV && <Stats />}

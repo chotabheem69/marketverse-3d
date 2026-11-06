@@ -39,6 +39,11 @@ interface AppState {
   isPortfolioOpen: boolean;
   setPortfolioOpen: (open: boolean) => void;
 
+  // Game mode (WASD controls)
+  gameMode: boolean;
+  setGameMode: (enabled: boolean) => void;
+  toggleGameMode: () => void;
+
   // Watchlist
   watchlist: string[];
   addToWatchlist: (instrumentId: string) => void;
@@ -85,6 +90,11 @@ export const useAppStore = create<AppState>()(
       setCommandPaletteOpen: (open) => set({ isCommandPaletteOpen: open }),
       isPortfolioOpen: false,
       setPortfolioOpen: (open) => set({ isPortfolioOpen: open }),
+
+      // Game mode
+      gameMode: false,
+      setGameMode: (enabled) => set({ gameMode: enabled }),
+      toggleGameMode: () => set((state) => ({ gameMode: !state.gameMode })),
 
       // Watchlist
       watchlist: [],

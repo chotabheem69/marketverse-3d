@@ -39,6 +39,21 @@ function PortfolioButton() {
   );
 }
 
+function GameModeToggle() {
+  const { gameMode, toggleGameMode } = useAppStore();
+  return (
+    <button
+      onClick={toggleGameMode}
+      className={`glass glass-hover px-2 md:px-3 py-1.5 rounded-lg text-sm ${
+        gameMode ? 'text-cyan-400 border-cyan-500/30' : 'text-slate-400'
+      }`}
+      title="Game Mode: WASD to move, Mouse to look (G)"
+    >
+      🎮
+    </button>
+  );
+}
+
 export function Header() {
   const { currency, setCurrency, theme, setTheme } = useAppStore();
   const [time, setTime] = useState(getISTTime());
@@ -83,6 +98,9 @@ export function Header() {
           <div className="text-sm text-slate-400 font-mono hidden lg:block">
             {time} IST
           </div>
+
+          {/* Game mode toggle */}
+          <GameModeToggle />
 
           {/* Portfolio button */}
           <PortfolioButton />
